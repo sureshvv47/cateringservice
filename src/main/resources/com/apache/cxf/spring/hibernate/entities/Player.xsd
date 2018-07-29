@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://benchresources.in/cdm/users" xmlns:tns="http://benchresources.in/cdm/users"
+	elementFormDefault="qualified">
+
+	<!-- player object with four attributes -->
+	<xsd:element name="usersType">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="userId" type="xsd:int" />
+				<xsd:element name="firstName" type="xsd:string" />
+				<xsd:element name="lastName" type="xsd:string" />
+				<xsd:element name="username" type="xsd:string" />
+				<xsd:element name="password" type="xsd:string" />
+				<xsd:element name="role" type="xsd:string" />
+				<xsd:element name="email" type="xsd:string" />
+				<xsd:element name="phone" type="xsd:string" />
+				<xsd:element name="status" type="xsd:string" />
+				<xsd:element name="createDate" type="xsd:date" />
+				<xsd:element name="lastModifiedDate" type="xsd:date" />
+				
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<!-- an object to contain lists of players referencing above player object -->
+	<xsd:element name="UsersListType">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="tns:usersType" minOccurs="0"
+					maxOccurs="unbounded" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+</xsd:schema>

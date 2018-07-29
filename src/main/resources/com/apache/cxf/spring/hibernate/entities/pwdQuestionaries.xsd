@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://benchresources.in/cdm/pwdQuestionaries" xmlns:tns="http://benchresources.in/cdm/pwdQuestionaries"
+	elementFormDefault="qualified">
+
+	<!-- player object with four attributes -->
+	<xsd:element name="pwdQuestionariesType">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="pwdQuestionarieId" type="xsd:int" />
+				<xsd:element name="userId" type="xsd:int" />
+				<xsd:element name="username" type="xsd:string" />
+				<xsd:element name="email" type="xsd:string" />
+				<xsd:element name="question1" type="xsd:string" />
+				<xsd:element name="answer1" type="xsd:string" />
+				<xsd:element name="question2" type="xsd:string" />
+				<xsd:element name="answer2" type="xsd:string" />
+				<xsd:element name="createdDate" type="xsd:date" />
+				<xsd:element name="lastUpdatedDate" type="xsd:date" />
+				
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<!-- an object to contain lists of players referencing above player object -->
+	<xsd:element name="PwdQuestionariesListType">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="tns:pwdQuestionariesType" minOccurs="0"
+					maxOccurs="unbounded" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+</xsd:schema>
