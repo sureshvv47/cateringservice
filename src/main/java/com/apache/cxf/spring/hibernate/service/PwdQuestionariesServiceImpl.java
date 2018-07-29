@@ -8,19 +8,11 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.apache.cxf.spring.hibernate.util.convertDate;
-import com.apache.cxf.spring.hibernate.service.UsersServiceImpl;
-import com.apache.cxf.spring.hibernate.model.Users;
 import com.apache.cxf.spring.hibernate.model.PwdQuestionaries;
-import java.util.GregorianCalendar;
-
-import javax.ws.rs.FormParam;
-
 import org.json.JSONObject;
 
 import in.benchresources.cdm.pwdquestionaries.PwdQuestionariesType;
-import in.benchresources.cdm.users.UsersListType;
-import in.benchresources.cdm.users.UsersType;
+
 
 @Service("pwdQuestionariesServices")
 public class PwdQuestionariesServiceImpl extends BaseDao implements IPwdQuestionariesService{

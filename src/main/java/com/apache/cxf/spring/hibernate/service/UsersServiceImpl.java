@@ -5,17 +5,12 @@ import java.util.List;
 import org.json.JSONObject;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.apache.cxf.spring.hibernate.model.PwdQuestionaries;
 import com.apache.cxf.spring.hibernate.model.Users;
 import com.apache.cxf.spring.hibernate.util.PasswordHandler;
-import com.apache.cxf.spring.hibernate.util.serviceException;
 
 import in.benchresources.cdm.users.UsersListType;
 import in.benchresources.cdm.users.UsersType;
@@ -62,9 +57,11 @@ public class UsersServiceImpl extends BaseDao implements IUsersService {
 				jsonResponse.put("statusReason", "Email already Registered");
 				return jsonResponse.toString();
 			}
-			userId = (Integer) sessionFactory.getCurrentSession().save(newUser);
 			newUser.setCreateDate(new Date());
+			userId = (Integer) sessionFactory.getCurrentSession().save(newUser);
+			System.out.println("<<<<User Created Successfully>>>>>"+userId);
 		}catch(HibernateException hibernateException){
+			System.out.println("<<<<<<<UserID creation failed>>>");
 			jsonResponse.put("status", "Exception");
 			jsonResponse.put("statusReason", "Error while inserting record into db");
 			return jsonResponse.toString();

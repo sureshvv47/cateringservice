@@ -13,12 +13,10 @@ import in.benchresources.cdm.feedback.FeedbackType;
 @Path("/feedbackServices")
 public interface IFeedbackService {
 
-	//http://HSC-PG00AZYN:8080/ApacheCXF-API/services/feedbackServices/addFeedback
+	//http://HSC-PG00AZMS:8085/ApacheCXF-API/services/feedbackServices/addFeedback
 	@POST
 	@Path("addFeedback")
-	//@Consumes({MediaType.APPLICATION_JSON})
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	//@Produces({MediaType.APPLICATION_FORM_URLENCODED})
-	//public String createOrSaveFeedbackInfo(FeedbackType feedbackType);
+	@Consumes({MediaType.APPLICATION_FORM_URLENCODED})
+	@Produces({MediaType.APPLICATION_JSON})
 	public String createOrSaveFeedbackInfo(@FormParam("name") String name, @FormParam("email") String email, @FormParam("subject") String subject, @FormParam("message") String message);
 }
