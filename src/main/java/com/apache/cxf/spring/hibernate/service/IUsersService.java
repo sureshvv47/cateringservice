@@ -48,15 +48,14 @@ public interface IUsersService {
 	@Path("getUser/{query}")
 	@Consumes({MediaType.APPLICATION_FORM_URLENCODED})
 	@Produces({MediaType.APPLICATION_JSON})
-
-	public Object getUserInfo(@PathParam("query") String query);
+	public String getUserInfo(@PathParam("query") String query);
 	
 	// http://localhost:8085/ApacheCXF-API/services/usersServices/userLogin
 	@POST
 	@Path("userLogin")
 	@Consumes({MediaType.APPLICATION_FORM_URLENCODED})
 	@Produces({MediaType.APPLICATION_JSON})
-	public Object userLogin(@FormParam("username") String username, @FormParam("password") String password);
+	public String userLogin(@FormParam("username") String username, @FormParam("password") String password);
 
 	// http://localhost:8085/ApacheCXF-API/services/usersServices/updateUser
 	@PUT

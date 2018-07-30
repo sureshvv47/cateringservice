@@ -137,6 +137,7 @@ public class UsersServiceImpl extends BaseDao implements IUsersService {
 	 * retrieves a User object based on the username,email,phone supplied in the formal argument using @PathParam
 	 */
 	
+	@SuppressWarnings("unchecked")
 	@Transactional
 	//@Override
 	public String getUserValidations(String query) {
@@ -174,9 +175,10 @@ public class UsersServiceImpl extends BaseDao implements IUsersService {
 	 */
 	@Transactional
 	@Override
-	public Object getUserInfo(String query) {
+	public String getUserInfo(String query) {
 		UsersType getuser = new UsersType();
 		Users user = null;
+		JSONObject jsonResponse = new JSONObject();
 		// retrieve User based on the username supplied in the formal argument
 		try{
 			Session session = sessionFactory.getCurrentSession();
@@ -188,7 +190,9 @@ public class UsersServiceImpl extends BaseDao implements IUsersService {
 					criteria.add(Restrictions.eqOrIsNull("userId", Integer.parseInt(query)));
 					user = (Users)criteria.uniqueResult();
 				} else {
-					return "UserId Does not exists";
+					jsonResponse.put("status", "Failure");
+					jsonResponse.put("statusMessage", "UserId Does not exists");
+					return jsonResponse.toString();
 				}
 			}
 			else {
@@ -197,28 +201,32 @@ public class UsersServiceImpl extends BaseDao implements IUsersService {
 					criteria.add(Restrictions.eqOrIsNull("username", query));
 					user = (Users)criteria.uniqueResult();
 				} else {
-					return "Username Does not exists";
+					jsonResponse.put("status", "Failure");
+					jsonResponse.put("statusMessage", "Username Does not exists");
+					return jsonResponse.toString();
 				}
 			}
 			
 		}catch(HibernateException hibernateException){
 			hibernateException.printStackTrace();
 		} if (user.getUsername() != null || user.getUsername() != "") {
-			getuser.setUserId(user.getUserId());
-			getuser.setFirstName(user.getFirstName());
-			getuser.setLastName(user.getLastName());
-			getuser.setUsername(user.getUsername());
-			//getuser.setPassword(user.getPassword());
-			getuser.setPhone(user.getPhone());
-			getuser.setRole(user.getRole());
-			getuser.setStatus(user.getStatus());
-			getuser.setEmail(user.getEmail());
-			return getuser;
+			jsonResponse.put("userId", user.getUserId());
+			jsonResponse.put("firstName", user.getFirstName());
+			jsonResponse.put("lastName", user.getLastName());
+			jsonResponse.put("username", user.getUsername());
+			jsonResponse.put("phone", user.getPhone());
+			jsonResponse.put("email", user.getEmail());
+			jsonResponse.put("role", user.getRole());
+			jsonResponse.put("status", user.getStatus());
+			return jsonResponse.toString();
 		} else {
-				return "Invalid UserId or UserName";
+				jsonResponse.put("status", "Failure");
+				jsonResponse.put("statusMessage", "Invalid UserId or UserName");
+				return jsonResponse.toString();
 			}
 	}
 
+	@SuppressWarnings("unchecked")
 	public boolean validateUser(String query) {
 		boolean status=false;
 		try{
@@ -240,6 +248,7 @@ public class UsersServiceImpl extends BaseDao implements IUsersService {
 		}
 		return status;
 	}
+	@SuppressWarnings("unchecked")
 	public boolean validateUserId(int userId) {
 		boolean status=false;
 		try{
@@ -259,6 +268,7 @@ public class UsersServiceImpl extends BaseDao implements IUsersService {
 	 * 
 	 */
 	
+	@SuppressWarnings("unchecked")
 	public String validateCredentials(String username, String password) {
 		String status = "";
 		try{
@@ -278,9 +288,9 @@ public class UsersServiceImpl extends BaseDao implements IUsersService {
 	}
 	@Transactional
 	@Override
-	public Object userLogin(String username, String password) {
-		UsersType getuser = new UsersType();
+	public String userLogin(String username, String password) {
 		Users user = null;
+		JSONObject jsonResponse = new JSONObject();
 		// retrieve User based on the username supplied in the formal argument
 		if (validateCredentials(username, password).equals("success")) {
 			//System.out.println("Valid TestCase");
@@ -289,21 +299,26 @@ public class UsersServiceImpl extends BaseDao implements IUsersService {
 				Criteria criteria = session.createCriteria(Users.class);
 				criteria.add(Restrictions.eqOrIsNull("username", username));
 				user = (Users)criteria.uniqueResult();
-				getuser.setUserId(user.getUserId());
-				getuser.setFirstName(user.getFirstName());
-				getuser.setLastName(user.getLastName());
-				getuser.setUsername(user.getUsername());
-				getuser.setPhone(user.getPhone());
-				getuser.setRole(user.getRole());
-				getuser.setStatus(user.getStatus());
-				getuser.setEmail(user.getEmail());
+				jsonResponse.put("userId", user.getUserId());
+				jsonResponse.put("firstName", user.getFirstName());
+				jsonResponse.put("lastName", user.getLastName());
+				jsonResponse.put("username", user.getUsername());
+				jsonResponse.put("phone", user.getPhone());
+				jsonResponse.put("email", user.getEmail());
+				jsonResponse.put("role", user.getRole());
+				jsonResponse.put("status",user.getStatus());
 			}catch(HibernateException hibernateException){
-				hibernateException.printStackTrace();
+				jsonResponse.put("status", "Exception");
+				jsonResponse.put("statusMessage", "Exception occurred while updating password. Please contact Administrator");
+				return jsonResponse.toString();
+				//hibernateException.printStackTrace();
 			}
-			return getuser;
+			return jsonResponse.toString();
 		} else {
 			//System.out.println("InValid");
-			return "Invalid Credentials or User Does not Exist !!! ";	
+			jsonResponse.put("status", "Failure");
+			jsonResponse.put("statusMessage", "Invalid Credentials or User Does not exist !!!");
+			return jsonResponse.toString();	
 		}
 		
 	}
@@ -328,11 +343,10 @@ public class UsersServiceImpl extends BaseDao implements IUsersService {
 	/**
 	 * retrieves all user stored
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "unused" })
 	@Transactional
 	@Override
 	public UsersListType getAllUsersInfo() {
-
 		// get all player info from database
 		List<Users> lstPlayer = sessionFactory.getCurrentSession().createCriteria(Users.class).list();
 		UsersListType playerListType = new UsersListType();
