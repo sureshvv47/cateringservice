@@ -7,6 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.json.JSONObject;
 import com.apache.cxf.spring.hibernate.model.Feedback;
 
+import in.benchresources.cdm.feedback.FeedbackType;
+import in.benchresources.cdm.feedback.FeedbackListType;
+
 @Service("feedbackServices")
 public class FeedbackServiceImpl extends BaseDao implements IFeedbackService {
 
