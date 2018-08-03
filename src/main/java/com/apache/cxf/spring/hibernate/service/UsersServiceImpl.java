@@ -79,7 +79,6 @@ public class UsersServiceImpl extends BaseDao implements IUsersService {
 		Users updateUser = new Users();
 		try{
 			if(validateUser(username)) {
-				if(password.trim()!=null) {
 					Users user = null;
 					Session session = sessionFactory.getCurrentSession();
 					Criteria criteria = session.createCriteria(Users.class);
@@ -99,12 +98,11 @@ public class UsersServiceImpl extends BaseDao implements IUsersService {
 					updateUser.setLastModifiedDate(new Date());
 					sessionFactory.getCurrentSession().clear();
 					sessionFactory.getCurrentSession().update(updateUser);
-				}
-					jsonResponse.put("status", "updated");
-					System.out.println("=======IFF=========");
+					jsonResponse.put("status", "success");
+					jsonResponse.put("statusMessage", "Password Updated Successfully");
 				} else {
-				System.out.println("=======else=========");
-				jsonResponse.put("status", "invalid Username");
+					jsonResponse.put("status", "failure");
+					jsonResponse.put("statusMessage", "Invalid Username");
 			}
 				
 		}catch(HibernateException hibernateException){
@@ -176,7 +174,6 @@ public class UsersServiceImpl extends BaseDao implements IUsersService {
 	@Transactional
 	@Override
 	public String getUserInfo(String query) {
-		UsersType getuser = new UsersType();
 		Users user = null;
 		JSONObject jsonResponse = new JSONObject();
 		// retrieve User based on the username supplied in the formal argument
@@ -226,8 +223,10 @@ public class UsersServiceImpl extends BaseDao implements IUsersService {
 			}
 	}
 
+
 	@SuppressWarnings("unchecked")
 	public boolean validateUser(String query) {
+		System.out.println("<<<Query value received>>>>>"+query);
 		boolean status=false;
 		try{
 			List<Users> usersList = sessionFactory.getCurrentSession().createCriteria(Users.class).list();
@@ -243,7 +242,9 @@ public class UsersServiceImpl extends BaseDao implements IUsersService {
 					break;
 				}
 			}
+			System.out.println("<<<<User Validation Completed>>>>"+status);
 		}catch(HibernateException hibernateException){
+			System.out.println("<<<<Exception Occurred while creating session>>>>");
 			hibernateException.printStackTrace();
 		}
 		return status;

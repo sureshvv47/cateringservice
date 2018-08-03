@@ -1,6 +1,7 @@
 package com.apache.cxf.spring.hibernate.service;
 
 import java.util.Date;
+import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -9,8 +10,11 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.apache.cxf.spring.hibernate.model.PwdQuestionaries;
+import com.apache.cxf.spring.hibernate.model.Users;
+
 import org.json.JSONObject;
 import com.apache.cxf.spring.hibernate.service.UsersServiceImpl;
+import com.apache.cxf.spring.hibernate.util.userServices;
 
 import in.benchresources.cdm.pwdquestionaries.PwdQuestionariesType;
 
@@ -29,12 +33,10 @@ public class PwdQuestionariesServiceImpl extends BaseDao implements IPwdQuestion
 		UsersServiceImpl userUtils = new UsersServiceImpl();
 		boolean status = false;
 		try{
-			if(username.trim()!=null && userUtils.validateUser(username)) {
-				if(email.trim()!=null && userUtils.validateUser(email)) {
-					if(question1.trim()!=null && answer1.trim()!=null && question2.trim()!=null && answer2.trim() != null )
+			if(username.trim()!=null && email.trim()!=null && !username.isEmpty() && !email.isEmpty()) {
+				if(question1.trim()!=null && answer1.trim()!=null && question2.trim()!=null && answer2.trim() != null )
 					status = true;
 				}
-			}
 			if(status) {
 				pwdQuestions.setUsername(username);
 				pwdQuestions.setEmail(email);
@@ -51,8 +53,9 @@ public class PwdQuestionariesServiceImpl extends BaseDao implements IPwdQuestion
 				jsonResponse.put("statusMessage", "invalid username");
 			}	
 		}catch(HibernateException hibernateException){
+			
 			jsonResponse.put("status", "Exception");
-			jsonResponse.put("statusMessage", "Exception occurred with service");
+			jsonResponse.put("statusMessage", hibernateException.getCause().getMessage());
 			//hibernateException.printStackTrace();
 		}
 		return  jsonResponse.toString();
@@ -62,9 +65,8 @@ public class PwdQuestionariesServiceImpl extends BaseDao implements IPwdQuestion
 	 @Override
 	 public  String getPwdQuestionaries(String query) {
 		JSONObject jsonResponse = new JSONObject();
-		UsersServiceImpl userUtils = new UsersServiceImpl();
 	  try{
-		  if (userUtils.validateUser(query)) {
+		  if (validateUser(query)) {
 			  	PwdQuestionaries pwdQuestions = new PwdQuestionaries();
 			  	Session session = sessionFactory.getCurrentSession();
 			  	Criteria criteria = session.createCriteria(PwdQuestionaries.class);
@@ -88,26 +90,55 @@ public class PwdQuestionariesServiceImpl extends BaseDao implements IPwdQuestion
 	@Override
 	public String validatePwdAnswers(String username, String question1, String answer1, String question2, String answer2) {
 		  JSONObject jsonResponse = new JSONObject();
-		  UsersServiceImpl userUtils = new UsersServiceImpl();
 		  try{
-			  if(userUtils.validateUser(username)) {
+			  if(validateUser(username)) {
 				  PwdQuestionaries pwdQuestions = new PwdQuestionaries();
 				  Session session = sessionFactory.getCurrentSession();
 				  Criteria criteria = session.createCriteria(PwdQuestionaries.class);
-				  criteria.add(Restrictions.and(Restrictions.eqOrIsNull("username", username)));
+				  criteria.add(Restrictions.eqOrIsNull("username", username));
 				  pwdQuestions = (PwdQuestionaries)criteria.uniqueResult();
 				  if(question1.equalsIgnoreCase(pwdQuestions.getQuestion1()) && answer1.equalsIgnoreCase(pwdQuestions.getAnswer1())) {
 					  if(question2.equalsIgnoreCase(pwdQuestions.getQuestion2()) && answer2.equalsIgnoreCase(pwdQuestions.getAnswer2()))
 						  jsonResponse.put("status", "success");
-					  else 
+					  else {
 						  jsonResponse.put("status", "failure");
-				  }
-			  } else {
+						  jsonResponse.put("statusMessage", "Entered Answers are not correct. Please try again !!");
+					  }
+				  } else {
+					  jsonResponse.put("status", "failure");
+					  jsonResponse.put("statusMessage", "Entered Answers are not correct. Please try again !!");
+				} } else {
 				  jsonResponse.put("status", "failure");
 				  jsonResponse.put("statusMessage","Validation Failed for User");
 			  }
 		  }catch(HibernateException hibernateException){
 				   hibernateException.printStackTrace(); }
 		return jsonResponse.toString();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public boolean validateUser(String query) {
+		System.out.println("<<<pwdQuestionaries util service>>>>"+query);
+		boolean status=false;
+		try{
+			List<Users> usersList = sessionFactory.getCurrentSession().createCriteria(Users.class).list();
+			for (Users users : usersList) {
+				if(users.getUsername().equals(query)) {
+					status=true;
+					break;
+				} else if(users.getEmail().equals(query)) {
+					status = true;
+					break;
+				} else if (users.getPhone().equals(query)) {
+					status = true;
+					break;
+				}
+			}
+			System.out.println("<<successfully executed service>>"+status);
+		}catch(HibernateException hibernateException){
+			status=false;
+			//hibernateException.printStackTrace();
+		}
+		return status;
 	}
 }

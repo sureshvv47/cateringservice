@@ -37,7 +37,7 @@ public class userServices extends BaseDao {
 	
 	@SuppressWarnings("unchecked")
 	public boolean validateUser(String query) {
-		System.out.println("<<<User util service>>>>");
+		System.out.println("<<<User util service>>>>"+query);
 		boolean status=false;
 		try{
 			List<Users> usersList = sessionFactory.getCurrentSession().createCriteria(Users.class).list();
