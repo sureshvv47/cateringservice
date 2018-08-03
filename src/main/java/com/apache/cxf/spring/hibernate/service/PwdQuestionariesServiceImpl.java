@@ -33,10 +33,10 @@ public class PwdQuestionariesServiceImpl extends BaseDao implements IPwdQuestion
 		UsersServiceImpl userUtils = new UsersServiceImpl();
 		boolean status = false;
 		try{
-			if(username.trim()!=null && email.trim()!=null && !username.isEmpty() && !email.isEmpty()) {
+			if(validateUserForPwdQuestionaries(username)) {
 				if(question1.trim()!=null && answer1.trim()!=null && question2.trim()!=null && answer2.trim() != null )
 					status = true;
-				}
+				} 
 			if(status) {
 				pwdQuestions.setUsername(username);
 				pwdQuestions.setEmail(email);
@@ -59,6 +59,22 @@ public class PwdQuestionariesServiceImpl extends BaseDao implements IPwdQuestion
 			//hibernateException.printStackTrace();
 		}
 		return  jsonResponse.toString();
+	}
+	
+	 @SuppressWarnings("unchecked")
+	public  boolean validateUserForPwdQuestionaries(String query) {
+		boolean status=true;
+	  try{
+		  	List<PwdQuestionaries> pwdUsers = sessionFactory.getCurrentSession().createCriteria(PwdQuestionaries.class).list();
+		  	for(PwdQuestionaries pwdQuestions : pwdUsers) {
+		  		if(pwdQuestions.getUsername().equals(query)) {
+						status = false;
+						break;
+		  			}
+		  	}
+	  } catch(HibernateException hibernateException){
+	   hibernateException.printStackTrace(); }  
+	  return status;
 	}
 	
 	@Transactional
